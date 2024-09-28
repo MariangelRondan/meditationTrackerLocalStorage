@@ -1,7 +1,7 @@
 <div class="max-w-[80%] mx-auto pt-10">
   <div class="flex items-center">
     <h2 class="flex-auto text-sm font-semibold text-[#1a2856]">
-      Setiembre 2024
+      {{ currentMonth | date : "MMMM yyyy" }}
     </h2>
     <button
       type="button"
@@ -41,26 +41,29 @@
     </button>
   </div>
   <div
-    class="mt-10 grid grid-cols-7 text-center text-xs leading-6 text-gray-500"
+    class="mt-10 grid grid-cols-7 text-center font-semibold text-xs leading-6 text-[#1a2856]"
   >
+    <div>D</div>
     <div>L</div>
     <div>M</div>
     <div>M</div>
     <div>J</div>
     <div>V</div>
     <div>S</div>
-    <div>D</div>
   </div>
   <div class="mt-2 grid grid-cols-7 text-sm">
+    @for(day of daysInMonth; track day){
     <div class="py-2">
       <button
         type="button"
-        class="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-200"
+        class="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-[#6683DF] hover:bg-gray-200"
       >
-        <time datetime="2021-12-27">27</time>
+        <time datetime="2021-12-27">{{ day }}</time>
       </button>
     </div>
-    <div class="py-2">
+
+    }
+    <!-- <div class="py-2">
       <button
         type="button"
         class="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-200"
@@ -387,7 +390,7 @@
       >
         <time datetime="2022-02-06">6</time>
       </button>
-    </div>
+    </div> -->
   </div>
   <div class="relative">
     <div class="absolute inset-0 flex items-center" aria-hidden="true">
