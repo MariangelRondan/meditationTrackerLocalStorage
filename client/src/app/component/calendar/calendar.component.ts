@@ -1,10 +1,10 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, NgClass],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
 })
@@ -14,7 +14,7 @@ export class CalendarComponent implements OnInit {
 
   //Calendar
   currentMonth: Date = new Date();
-  daysInMonth!: number[];
+  daysInMonth!: any;
   selectedDate: Date | undefined | null;
 
   // Guardar el mes y año actuales
@@ -45,10 +45,35 @@ export class CalendarComponent implements OnInit {
   updateDaysInMonth() {
     const year = this.currentMonth.getFullYear();
     const month = this.currentMonth.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    this.daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  }
 
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const firstDayOfWeek = new Date(year, month, 1).getDay();
+
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+    const prevMonthDays = Array.from({ length: firstDayOfWeek }, (_, i) => ({
+      day: daysInPrevMonth - firstDayOfWeek + i + 1,
+      monthType: 'prev',
+    }));
+
+    const currentMonthDays = Array.from({ length: daysInMonth }, (_, i) => ({
+      day: i + 1,
+      monthType: 'current',
+    }));
+
+    const lastDayOfWeek = new Date(year, month + 1, 0).getDay();
+
+    const nextMonthDays = Array.from({ length: 6 - lastDayOfWeek }, (_, i) => ({
+      day: i + 1,
+      monthType: 'next',
+    }));
+
+    this.daysInMonth = [
+      ...prevMonthDays,
+      ...currentMonthDays,
+      ...nextMonthDays,
+    ];
+  }
   previousMonth() {
     this.selectedDate = null;
     const newDate = new Date(this.currentMonth);
@@ -65,6 +90,28 @@ export class CalendarComponent implements OnInit {
     this.currentMonth = newDate;
     this.updateDaysInMonth();
     this.cdr.detectChanges();
+  }
+
+  getPrevMonthDays(): number {
+    const firstDayOfWeek = new Date(
+      this.currentMonth.getFullYear(),
+      this.currentMonth.getMonth(),
+      1
+    ).getDay();
+    return firstDayOfWeek;
+  }
+
+  // Determina si el día actual pertenece al mes anterior
+  isPrevMonthDay(index: number): boolean {
+    return index < this.getPrevMonthDays();
+  }
+
+  // Determina si el día actual pertenece al mes siguiente
+  isNextMonthDay(index: number): boolean {
+    const totalDays =
+      this.getPrevMonthDays() +
+      this.daysInMonth.filter((day: any) => day > 0 && day <= 31).length;
+    return index >= totalDays;
   }
 
   isPaseoDay(day: number): boolean {

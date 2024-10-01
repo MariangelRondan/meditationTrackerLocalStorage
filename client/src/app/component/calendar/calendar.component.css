@@ -1,0 +1,7 @@
+.notThisMonth,
+.lasext {
+  color: var(--verde-claro);
+}
+.thisMonth {
+  color: var(--color-letras);
+}
