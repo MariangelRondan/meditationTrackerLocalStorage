@@ -1,3 +1,17 @@
 .gradient {
-  background-image: linear-gradient(to right top, #13867e, #45a085, #ff8561);
+  background-image: linear-gradient(to right top, #13867e, #45a085, #f3eada);
+}
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-animation {
+  animation: fadeInUp 1.5s ease-out forwards;
 }

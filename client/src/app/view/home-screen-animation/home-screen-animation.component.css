@@ -1,17 +1,42 @@
-@keyframes wave-animation {
-  0% {
-    stroke-dashoffset: 0;
-  }
+@keyframes scaleUpDown {
+  0%,
   100% {
-    stroke-dashoffset: 2000;
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
   }
 }
 
-path {
-  stroke: #00a896;
-  stroke-width: 10;
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 0;
-  animation: wave-animation 5s infinite linear;
-  fill: none;
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.scale-animation {
+  animation: scaleUpDown 4s ease-in-out infinite;
+}
+
+.text-animation-1 {
+  animation: fadeInUp 2s ease-out forwards;
+}
+
+.text-animation-2 {
+  opacity: 0;
+  animation: fadeIn 2s ease-out 1s forwards;
 }
