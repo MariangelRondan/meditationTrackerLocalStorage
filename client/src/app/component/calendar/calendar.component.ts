@@ -22,6 +22,9 @@ export class CalendarComponent implements OnInit {
   actualYear: number = new Date().getFullYear();
   actualDay: number = new Date().getDate();
 
+  //dialog
+  isVisible: boolean = true;
+
   constructor(private cdr: ChangeDetectorRef) {}
   ngOnInit(): void {
     this.updateDaysInMonth();
@@ -122,5 +125,9 @@ export class CalendarComponent implements OnInit {
     );
     const formattedDate = date.toISOString().split('T')[0];
     return this.diasMeditados.has(formattedDate);
+  }
+
+  toggleModal(boolean: boolean) {
+    this.isVisible = boolean;
   }
 }
