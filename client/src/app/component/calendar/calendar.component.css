@@ -5,3 +5,16 @@
 .thisMonth {
   color: var(--color-letras);
 }
+.highlight-current-day {
+  color: var(--verde-claro);
+}
+
+.highlight-day {
+  color: var(--color-letras);
+  background-color: var(--naranja);
+  border-radius: 50px;
+
+  width: 25px;
+  font-weight: 700;
+  height: auto;
+}

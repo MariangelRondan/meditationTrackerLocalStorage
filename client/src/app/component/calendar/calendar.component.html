@@ -55,16 +55,18 @@
   </div>
   <div class="mt-2 grid grid-cols-7 text-sm">
     @for( dayInfo of daysInMonth; let i = $index; track i){
-
-    <div class="p-4">
+    <div class="p-4 relative">
       <button
         type="button"
         [ngClass]="{
           notThisMonth: dayInfo.monthType === 'prev',
           lasext: dayInfo.monthType === 'next',
-          thisMonth: dayInfo.monthType === 'current'
+          thisMonth: dayInfo.monthType === 'current',
+          'highlight-day': isPaseoDay(dayInfo.day),
+          'highlight-current-day': isCurrentDay(dayInfo.day)
         }"
-        (click)="toggleModal(true)"
+        class="p-1"
+        (click)="selectDate(dayInfo)"
       >
         {{ dayInfo.day }}
       </button>
@@ -196,53 +198,64 @@
               >
                 Update de hoy
               </h3>
-              <div class="mt-2 grid grid-cols-2 gap-4">
-                <div class="mx-3">
-                  <p class="px-1 text-sm text-gray-500 leading-6">
-                    Tiempo (min)
-                  </p>
-                  <input
-                    type="number"
-                    class="w-28 rounded-md py-1 px-2 bg-slate-200"
-                  />
+              <form #meditationForm="ngForm" (ngSubmit)="onSubmit()">
+                <div class="mt-2 grid grid-cols-2 gap-4">
+                  <div class="mx-3">
+                    <p class="px-1 text-sm text-gray-500 leading-6">
+                      Tiempo (min)
+                    </p>
+                    <input
+                      type="number"
+                      class="w-28 rounded-md py-1 px-2 bg-slate-200"
+                      name="duration"
+                      [(ngModel)]="meditation.duration"
+                      #duration="ngModel"
+                      required
+                    />
+                  </div>
+                  <div class="">
+                    <p class="px-1 text-sm text-gray-500 leading-6">Tipo</p>
+                    <select
+                      name="type"
+                      [(ngModel)]="meditation.type"
+                      required
+                      #type="ngModel"
+                      id=""
+                      class="mr-3 bg-slate-200 rounded-md py-1 px-2"
+                    >
+                      <option value="Vipassana">Vipassana</option>
+                      <option value="Body scan">Body scan</option>
+                      <option value="Compasión">Compasión</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="">
-                  <p class="px-1 text-sm text-gray-500 leading-6">Tipo</p>
-                  <select
-                    name=""
-                    id=""
-                    class="mr-3 bg-slate-200 rounded-md py-1 px-2"
+                <input
+                  name="notes"
+                  [(ngModel)]="meditation.notes"
+                  id=""
+                  placeholder="Notas"
+                  class="w-[91%] ml-3 my-3 block mx-2 h-auto min-h-12 p-2 rounded-md bg-slate-200"
+                />
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                  <button
+                    type="submit"
+                    class="w-full justify-center rounded-md bg-[var(--color-primario)] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    (click)="toggleModal(false)"
+                    [disabled]="meditationForm.invalid"
                   >
-                    <option value="">Vipassana</option>
-                    <option value="">Body scan</option>
-                    <option value="">Compasión</option>
-                    <option value="">Otro</option>
-                  </select>
+                    Guardar
+                  </button>
+                  <button
+                    type="button"
+                    class="w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    (click)="toggleModal(false)"
+                  >
+                    Cancelar
+                  </button>
                 </div>
-              </div>
-              <input
-                name=""
-                id=""
-                placeholder="Notas"
-                class="w-[90%] my-3 block mx-2 h-auto min-h-12 p-2 rounded-md bg-slate-200"
-              />
+              </form>
             </div>
-          </div>
-          <div class="mt-6 grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              class="w-full justify-center rounded-md bg-[var(--color-primario)] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              (click)="toggleModal(false)"
-            >
-              Guardar
-            </button>
-            <button
-              type="button"
-              class="w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              (click)="toggleModal(false)"
-            >
-              Cancelar
-            </button>
           </div>
         </div>
       </div>

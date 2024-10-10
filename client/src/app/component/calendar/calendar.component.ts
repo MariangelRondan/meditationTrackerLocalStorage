@@ -1,16 +1,19 @@
 import { DatePipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TrackerService } from '../../services/tracker.service';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [DatePipe, NgClass],
+  imports: [DatePipe, NgClass, FormsModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
 })
 export class CalendarComponent implements OnInit {
-  diasMeditados: any | undefined = [];
+  diasMeditados: Set<string> = new Set();
   selectedMeditation: undefined | any | void = [];
+  myTracking = [];
 
   //Calendar
   currentMonth: Date = new Date();
@@ -23,11 +26,29 @@ export class CalendarComponent implements OnInit {
   actualDay: number = new Date().getDate();
 
   //dialog
-  isVisible: boolean = true;
+  isVisible: boolean = false;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  meditation = {
+    duration: null,
+    type: 'Vipassana',
+    notes: '',
+    date: Date.now(),
+  };
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private trackerService: TrackerService
+  ) {}
   ngOnInit(): void {
     this.updateDaysInMonth();
+    this.getTracking();
+  }
+
+  getTracking() {
+    this.trackerService.getAllTrack().subscribe((value) => {
+      this.myTracking = value;
+      this.initializePaseoDates();
+    });
   }
 
   isCurrentMonth(): boolean {
@@ -53,12 +74,14 @@ export class CalendarComponent implements OnInit {
 
     const firstDayOfWeek = new Date(year, month, 1).getDay();
 
+    // Días del mes anterior
     const daysInPrevMonth = new Date(year, month, 0).getDate();
     const prevMonthDays = Array.from({ length: firstDayOfWeek }, (_, i) => ({
       day: daysInPrevMonth - firstDayOfWeek + i + 1,
       monthType: 'prev',
     }));
 
+    // Días del mes actual
     const currentMonthDays = Array.from({ length: daysInMonth }, (_, i) => ({
       day: i + 1,
       monthType: 'current',
@@ -66,6 +89,7 @@ export class CalendarComponent implements OnInit {
 
     const lastDayOfWeek = new Date(year, month + 1, 0).getDay();
 
+    // Días del mes siguiente
     const nextMonthDays = Array.from({ length: 6 - lastDayOfWeek }, (_, i) => ({
       day: i + 1,
       monthType: 'next',
@@ -77,6 +101,7 @@ export class CalendarComponent implements OnInit {
       ...nextMonthDays,
     ];
   }
+
   previousMonth() {
     this.selectedDate = null;
     const newDate = new Date(this.currentMonth);
@@ -117,17 +142,68 @@ export class CalendarComponent implements OnInit {
     return index >= totalDays;
   }
 
+  initializePaseoDates(): void {
+    this.diasMeditados.clear();
+    this.myTracking?.forEach((update: any) => {
+      // Convertir fecha ISO a formato 'yyyy-MM-dd'
+      const formattedDate = new Date(update.date).toISOString().split('T')[0];
+      console.log(this.diasMeditados);
+      this.diasMeditados.add(formattedDate);
+    });
+  }
+
   isPaseoDay(day: number): boolean {
     const date = new Date(
       this.currentMonth.getFullYear(),
       this.currentMonth.getMonth(),
       day
     );
+
     const formattedDate = date.toISOString().split('T')[0];
     return this.diasMeditados.has(formattedDate);
   }
 
-  toggleModal(boolean: boolean) {
-    this.isVisible = boolean;
+  selectDate(dayInfo: any) {
+    if (dayInfo.monthType === 'prev') {
+      // Si es del mes anterior
+      this.selectedDate = new Date(
+        this.currentMonth.getFullYear(),
+        this.currentMonth.getMonth() - 1,
+        dayInfo.day
+      );
+    } else if (dayInfo.monthType === 'next') {
+      // Si es del mes siguiente
+      this.selectedDate = new Date(
+        this.currentMonth.getFullYear(),
+        this.currentMonth.getMonth() + 1,
+        dayInfo.day
+      );
+    } else {
+      // Si es del mes actual
+      this.selectedDate = new Date(
+        this.currentMonth.getFullYear(),
+        this.currentMonth.getMonth(),
+        dayInfo.day
+      );
+    }
+
+    this.toggleModal(true);
+  }
+
+  toggleModal(isVisible: boolean) {
+    this.isVisible = isVisible;
+  }
+
+  onSubmit() {
+    if (this.selectedDate && this.selectedDate instanceof Date) {
+      this.trackerService
+        .dayUpdate({ ...this.meditation, date: this.selectedDate })
+        .subscribe(
+          (value) => console.log('Respuesta del servidor', value),
+          (error) => console.error('Error al enviar la meditación', error)
+        );
+    } else {
+      console.error('Fecha no seleccionada o no válida');
+    }
   }
 }
