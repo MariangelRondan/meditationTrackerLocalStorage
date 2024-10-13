@@ -18,7 +18,7 @@ export class CalendarComponent implements OnInit {
   //Calendar
   currentMonth: Date = new Date();
   daysInMonth!: any;
-  selectedDate: Date | undefined | null;
+  selectedDate: any | undefined;
 
   // Guardar el mes y año actuales
   actualMonth: number = new Date().getMonth();
@@ -103,7 +103,7 @@ export class CalendarComponent implements OnInit {
   }
 
   previousMonth() {
-    this.selectedDate = null;
+    this.selectedDate = undefined;
     const newDate = new Date(this.currentMonth);
     newDate.setMonth(newDate.getMonth() - 1);
     this.currentMonth = newDate;
@@ -186,8 +186,12 @@ export class CalendarComponent implements OnInit {
         dayInfo.day
       );
     }
-
-    this.toggleModal(true);
+    const selectedDateStr = this.selectedDate.toISOString().split('T')[0]; // 'yyyy-MM-dd'
+    this.selectedMeditation = this.myTracking?.filter((update: any) => {
+      const itemDateStr = new Date(update.date).toISOString().split('T')[0]; // 'yyyy-MM-dd'
+      return itemDateStr === selectedDateStr;
+    });
+    console.log(this.selectedMeditation);
   }
 
   toggleModal(isVisible: boolean) {
