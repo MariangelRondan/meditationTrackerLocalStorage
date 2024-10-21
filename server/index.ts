@@ -1,6 +1,7 @@
 import express from "express";
 import { trackerRouter } from "./routes/tracker.router";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -8,6 +9,8 @@ const PORT = process.env.PORT || 500;
 
 const app = express();
 app.use(express.json());
+
+app.use(cors());
 
 //DATABASE CONNECTION
 import mongoose from "mongoose";

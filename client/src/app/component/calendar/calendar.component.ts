@@ -2,6 +2,7 @@ import { DatePipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TrackerService } from '../../services/tracker.service';
+import { MeditationI, MeditationType } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-calendar',
@@ -14,23 +15,24 @@ export class CalendarComponent implements OnInit {
   diasMeditados: Set<string> = new Set();
   selectedMeditation: undefined | any | void = [];
   myTracking = [];
+  editMode = false;
 
   //Calendar
   currentMonth: Date = new Date();
   daysInMonth!: any;
-  selectedDate: any | undefined;
 
   // Guardar el mes y año actuales
   actualMonth: number = new Date().getMonth();
   actualYear: number = new Date().getFullYear();
   actualDay: number = new Date().getDate();
+  selectedDate: any;
 
   //dialog
   isVisible: boolean = false;
 
-  meditation = {
-    duration: null,
-    type: 'Vipassana',
+  meditation: MeditationI = {
+    duration: 0,
+    type: MeditationType.Vipassana,
     notes: '',
     date: Date.now(),
   };
@@ -47,6 +49,7 @@ export class CalendarComponent implements OnInit {
   getTracking() {
     this.trackerService.getAllTrack().subscribe((value) => {
       this.myTracking = value;
+      this.selectDate({ day: this.actualDay, monthType: 'current' });
       this.initializePaseoDates();
     });
   }
@@ -147,17 +150,12 @@ export class CalendarComponent implements OnInit {
     this.myTracking?.forEach((update: any) => {
       // Convertir fecha ISO a formato 'yyyy-MM-dd'
       const formattedDate = new Date(update.date).toISOString().split('T')[0];
-      console.log(this.diasMeditados);
       this.diasMeditados.add(formattedDate);
     });
   }
 
   isPaseoDay(day: number): boolean {
-    const date = new Date(
-      this.currentMonth.getFullYear(),
-      this.currentMonth.getMonth(),
-      day
-    );
+    const date = new Date(this.actualYear, this.actualMonth, day);
 
     const formattedDate = date.toISOString().split('T')[0];
     return this.diasMeditados.has(formattedDate);
@@ -165,49 +163,79 @@ export class CalendarComponent implements OnInit {
 
   selectDate(dayInfo: any) {
     if (dayInfo.monthType === 'prev') {
-      // Si es del mes anterior
-      this.selectedDate = new Date(
-        this.currentMonth.getFullYear(),
-        this.currentMonth.getMonth() - 1,
-        dayInfo.day
-      );
+      this.previousMonth();
     } else if (dayInfo.monthType === 'next') {
-      // Si es del mes siguiente
-      this.selectedDate = new Date(
-        this.currentMonth.getFullYear(),
-        this.currentMonth.getMonth() + 1,
-        dayInfo.day
-      );
+      this.nextMonth();
     } else {
-      // Si es del mes actual
       this.selectedDate = new Date(
-        this.currentMonth.getFullYear(),
-        this.currentMonth.getMonth(),
+        this.actualYear,
+        this.actualMonth,
         dayInfo.day
       );
+      this.meditation.date = this.selectedDate;
     }
     const selectedDateStr = this.selectedDate.toISOString().split('T')[0]; // 'yyyy-MM-dd'
     this.selectedMeditation = this.myTracking?.filter((update: any) => {
       const itemDateStr = new Date(update.date).toISOString().split('T')[0]; // 'yyyy-MM-dd'
       return itemDateStr === selectedDateStr;
     });
-    console.log(this.selectedMeditation);
   }
 
-  toggleModal(isVisible: boolean) {
+  toggleModal(isVisible: boolean, data?: any) {
     this.isVisible = isVisible;
+    if (data) {
+      this.editMode = true;
+      this.meditation = data;
+    }
+  }
+  toggleEdit() {
+    this.editMode = !this.editMode;
   }
 
   onSubmit() {
-    if (this.selectedDate && this.selectedDate instanceof Date) {
+    if (this.editMode) {
+      // Update existing meditation
       this.trackerService
-        .dayUpdate({ ...this.meditation, date: this.selectedDate })
+        .updateMeditation(this.meditation._id as string, this.meditation)
         .subscribe(
-          (value) => console.log('Respuesta del servidor', value),
-          (error) => console.error('Error al enviar la meditación', error)
+          (response) => {
+            this.isVisible = false;
+            this.toggleEdit();
+            this.getTracking();
+            this.meditation = {
+              duration: 0,
+              type: MeditationType.Vipassana,
+              notes: '',
+              date: Date.now(),
+            };
+          },
+          (error) => {
+            console.error('Error updating meditation', error);
+          }
         );
     } else {
-      console.error('Fecha no seleccionada o no válida');
+      // Create new meditation
+      this.trackerService.newMeditation(this.meditation).subscribe(
+        (response) => {
+          this.toggleModal(false);
+          this.getTracking();
+          this.meditation = {
+            duration: 0,
+            type: MeditationType.Vipassana,
+            notes: '',
+            date: Date.now(),
+          };
+        },
+        (error) => {
+          console.error('Error creating meditation', error);
+        }
+      );
     }
+  }
+
+  deleteMeditation(id: string) {
+    this.trackerService.deleteMeditation(id).subscribe((value) => {
+      +this.getTracking();
+    });
   }
 }

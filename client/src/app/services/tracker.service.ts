@@ -9,12 +9,19 @@ export class TrackerService {
 
   constructor(private http: HttpClient) {}
 
-  dayUpdate(dayData: any) {
-    console.log(dayData);
+  newMeditation(dayData: any) {
     return this.http.post<any>(this.API_URL, dayData);
   }
 
   getAllTrack() {
     return this.http.get<any>(this.API_URL);
+  }
+
+  updateMeditation(id: string, updateData: any) {
+    return this.http.put<any>(`${this.API_URL}/${id}`, updateData);
+  }
+
+  deleteMeditation(id: string) {
+    return this.http.delete<any>(`${this.API_URL}/${id}`);
   }
 }
