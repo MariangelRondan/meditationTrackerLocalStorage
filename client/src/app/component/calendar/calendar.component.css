@@ -5,20 +5,29 @@
 .thisMonth {
   color: var(--color-letras);
 }
+
 .highlight-current-day {
   color: var(--naranja);
+  font-weight: 700;
+  width: 30px;
+  border: 3px dashed var(--naranja);
 }
 
 .highlight-day {
-  color: var(--color-letras);
-  background-color: var(--naranja);
-  border-radius: 50px;
-  width: 25px;
-  font-weight: 700;
-  height: auto;
+  width: 30px;
+  background-color: var(--color-primario);
+  border: 2px solid var(--verde-claro);
+  box-sizing: border-box;
+  color: white;
 }
 
 .selected-day {
-  border: 2px var(--naranja) solid;
+  width: 30px;
+  font-weight: 700;
+  box-shadow: 0 0 10px 5px var(--naranja);
+}
+
+button {
+  font-weight: 500;
   border-radius: 50px;
 }
