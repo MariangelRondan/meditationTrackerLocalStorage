@@ -3,7 +3,7 @@ export interface MeditationI {
   duration: number;
   type: MeditationType;
   notes: string;
-  date: Date | number;
+  date: Date | undefined;
 }
 
 export enum MeditationType {

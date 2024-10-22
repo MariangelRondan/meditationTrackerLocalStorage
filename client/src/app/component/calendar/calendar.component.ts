@@ -16,7 +16,7 @@ export class CalendarComponent implements OnInit {
   selectedMeditation: undefined | any | void = [];
   myTracking = [];
   editMode = false;
-
+  editingMeditationId: string | undefined = undefined;
   //Calendar
   currentMonth: Date = new Date();
   daysInMonth!: any;
@@ -34,7 +34,7 @@ export class CalendarComponent implements OnInit {
     duration: 0,
     type: MeditationType.Vipassana,
     notes: '',
-    date: Date.now(),
+    date: undefined,
   };
 
   constructor(
@@ -155,7 +155,11 @@ export class CalendarComponent implements OnInit {
   }
 
   isPaseoDay(day: number): boolean {
-    const date = new Date(this.actualYear, this.actualMonth, day);
+    const date = new Date(
+      this.currentMonth.getFullYear(),
+      this.currentMonth.getMonth(),
+      day
+    );
 
     const formattedDate = date.toISOString().split('T')[0];
     return this.diasMeditados.has(formattedDate);
@@ -163,22 +167,38 @@ export class CalendarComponent implements OnInit {
 
   selectDate(dayInfo: any) {
     if (dayInfo.monthType === 'prev') {
+      // Si es del mes anterior
       this.previousMonth();
-    } else if (dayInfo.monthType === 'next') {
-      this.nextMonth();
-    } else {
       this.selectedDate = new Date(
-        this.actualYear,
-        this.actualMonth,
+        this.currentMonth.getFullYear(),
+        this.currentMonth.getMonth(),
+        dayInfo.day
+      );
+    } else if (dayInfo.monthType === 'next') {
+      // Si es del mes siguiente
+      this.nextMonth();
+      this.selectedDate = new Date(
+        this.currentMonth.getFullYear(),
+        this.currentMonth.getMonth(),
+        dayInfo.day
+      );
+    } else {
+      // Si es del mes actual
+      this.selectedDate = new Date(
+        this.currentMonth.getFullYear(),
+        this.currentMonth.getMonth(),
         dayInfo.day
       );
       this.meditation.date = this.selectedDate;
     }
+
     const selectedDateStr = this.selectedDate.toISOString().split('T')[0]; // 'yyyy-MM-dd'
+    console.log(selectedDateStr);
     this.selectedMeditation = this.myTracking?.filter((update: any) => {
       const itemDateStr = new Date(update.date).toISOString().split('T')[0]; // 'yyyy-MM-dd'
       return itemDateStr === selectedDateStr;
     });
+    console.log(this.selectedMeditation);
   }
 
   toggleModal(isVisible: boolean, data?: any) {
@@ -188,25 +208,32 @@ export class CalendarComponent implements OnInit {
       this.meditation = data;
     }
   }
-  toggleEdit() {
+
+  toggleEdit(id: string): void {
+    console.log('click');
     this.editMode = !this.editMode;
+    if (this.editingMeditationId === id) {
+      this.editingMeditationId = undefined;
+    } else {
+      this.editingMeditationId = id;
+    }
   }
 
   onSubmit() {
     if (this.editMode) {
-      // Update existing meditation
       this.trackerService
         .updateMeditation(this.meditation._id as string, this.meditation)
         .subscribe(
           (response) => {
+            console.log(response);
             this.isVisible = false;
-            this.toggleEdit();
+            this.editMode = false;
             this.getTracking();
             this.meditation = {
               duration: 0,
               type: MeditationType.Vipassana,
               notes: '',
-              date: Date.now(),
+              date: undefined,
             };
           },
           (error) => {
@@ -214,16 +241,17 @@ export class CalendarComponent implements OnInit {
           }
         );
     } else {
-      // Create new meditation
       this.trackerService.newMeditation(this.meditation).subscribe(
         (response) => {
-          this.toggleModal(false);
           this.getTracking();
+          console.log(response);
+          console.log(this.meditation);
+          this.toggleModal(false);
           this.meditation = {
             duration: 0,
             type: MeditationType.Vipassana,
             notes: '',
-            date: Date.now(),
+            date: undefined,
           };
         },
         (error) => {
@@ -235,7 +263,7 @@ export class CalendarComponent implements OnInit {
 
   deleteMeditation(id: string) {
     this.trackerService.deleteMeditation(id).subscribe((value) => {
-      +this.getTracking();
+      this.getTracking();
     });
   }
 }

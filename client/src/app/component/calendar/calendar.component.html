@@ -65,7 +65,8 @@
           'highlight-day': isPaseoDay(dayInfo.day),
           'highlight-current-day': isCurrentDay(dayInfo.day),
           'selected-day': selectedDate
-            ? selectedDate.getDate() === dayInfo.day
+            ? selectedDate.getDate() === dayInfo.day &&
+              dayInfo.monthType === 'current'
             : ''
         }"
         class="p-1"
@@ -99,33 +100,43 @@
           : "Nos tomamos un ratito?"
       }}
     </h2>
-    <p class="text-center font-semibold text-gray-200"></p>
-    <ol class="mt-2 space-y-1 text-sm leading-6 text-gray-500">
+    <ol class="mt-2 space-y-1 text-sm w-full leading-6 text-gray-500">
       @if(selectedMeditation.length > 0){ @for(meditation of selectedMeditation;
       track meditation){
       <li
-        class="group flex items-center space-x-2 rounded-xl px-1 py-2 focus-within:bg-gray-10 bg-gray-100"
+        class="relative grid grid-cols-[1fr_2fr] items-center space-x-2 rounded-xl px-1 py-2 bg-gray-100 h-auto"
       >
-        <img
-          src="assets/snakes-noback.png"
-          alt=""
-          class="h-28 flex-none rounded-full"
-        />
-        <div class="flex-auto">
-          <p class="text-[var(--verde-dark)]">Meditación de hoy:</p>
-          <p class="mt-0.5">Fecha: {{ meditation.date | date }}</p>
-
-          <p class="mt-0.5">Duración: {{ meditation.duration }} min</p>
-
-          <p class="mt-0.5">Tipo: {{ meditation.type }}</p>
-          <p class="mt-0.5">Notas: {{ meditation.notes }}</p>
+        <div>
+          <img src="assets/snakes-noback.png" alt="" class="w-auto" />
         </div>
-        <div class="relative focus-within:opacity-100 opacity-100">
+
+        <div class="flex flex-col justify-between relative w-full h-auto">
+          <div class="p-2 break-words">
+            <p class="text-[var(--color-primario)] font-semibold text-md">
+              Meditación de hoy:
+            </p>
+            <p class="mt-0.5">
+              <strong class="text-[var(--color-primario)]">Fecha:</strong>
+              {{ meditation.date | date }}
+            </p>
+            <p class="mt-0.5">
+              <strong class="text-[var(--color-primario)]">Duración:</strong>
+              {{ meditation.duration }} min
+            </p>
+            <p class="mt-0.5">
+              <strong class="text-[var(--color-primario)]">Tipo:</strong>
+              {{ meditation.type }}
+            </p>
+            <div class="mt-0.5 h-auto break-words w-min max-w-36">
+              <strong class="text-[var(--color-primario)]">Notas:</strong>
+              {{ meditation.notes }}
+            </div>
+          </div>
           <div>
             <button
-              (click)="toggleEdit()"
+              (click)="toggleEdit(meditation._id)"
               type="button"
-              class="-m-2 flex items-center rounded-full p-1.5 text-gray-500 hover:text-gray-600"
+              class="absolute top-2 right-2 z-10 rounded-full p-1.5 text-gray-500 hover:text-gray-600"
               id="menu-0-button"
               aria-expanded="false"
               aria-haspopup="true"
@@ -145,43 +156,44 @@
                 />
               </svg>
             </button>
-          </div>
-          @if(editMode){
-          <div
-            class="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="menu-0-button"
-            tabindex="-1"
-          >
-            <div class="py-1" role="none">
-              <button
-                (click)="toggleModal(true, meditation)"
-                class="block px-4 py-2 text-sm text-gray-700"
-                role="menuitem"
-                tabindex="-1"
-                id="menu-0-item-0"
-              >
-                Editar
-              </button>
-            </div>
-            <div class="py-1" role="none">
-              <button
-                (click)="deleteMeditation(meditation._id)"
-                class="block px-4 py-2 text-sm text-gray-700"
-                role="menuitem"
-                tabindex="-1"
-                id="menu-0-item-0"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
+            @if(editingMeditationId === meditation._id && editMode){
 
-          }
+            <div
+              class="absolute top-8 right-2 z-20 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-0-button"
+              tabindex="-1"
+            >
+              <div class="py-1" role="none">
+                <button
+                  (click)="toggleModal(true, meditation)"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-0-item-0"
+                >
+                  Editar
+                </button>
+              </div>
+              <div class="py-1" role="none">
+                <button
+                  (click)="deleteMeditation(meditation._id)"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-0-item-1"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+            }
+          </div>
         </div>
       </li>
-      } }
+
+      }}
       <li
         class="group flex items-center space-x-2 rounded-xl px-1 py-2 focus-within:bg-gray-10 bg-gray-100"
       >
@@ -216,7 +228,11 @@
         >
           <div>
             <div class="mx-auto flex items-center justify-center">
-              <img src="assets/relinda-noback.png" alt="" class="w-24" />
+              <img
+                src="assets/meditationTracker-2-removebg-preview.png"
+                alt=""
+                class="w-36"
+              />
             </div>
             <div class="mt-3 sm:mt-5">
               <h3
