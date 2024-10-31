@@ -1,8 +1,9 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TrackerService } from '../../services/tracker.service';
 import { MeditationI, MeditationType } from '../../interfaces/interfaces';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-calendar',
@@ -11,7 +12,7 @@ import { MeditationI, MeditationType } from '../../interfaces/interfaces';
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, OnDestroy {
   diasMeditados: Set<string> = new Set();
   selectedMeditation: undefined | any | void = [];
   myTracking = [];
@@ -27,11 +28,13 @@ export class CalendarComponent implements OnInit {
   actualDay: number = new Date().getDate();
   selectedDate: any;
 
+  private destroy$ = new Subject<void>();
+
   //dialog
   isVisible: boolean = false;
 
   meditation: MeditationI = {
-    duration: 0,
+    duration: undefined,
     type: MeditationType.Vipassana,
     notes: '',
     date: undefined,
@@ -41,17 +44,21 @@ export class CalendarComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private trackerService: TrackerService
   ) {}
+
   ngOnInit(): void {
     this.updateDaysInMonth();
     this.getTracking();
   }
 
   getTracking() {
-    this.trackerService.getAllTrack().subscribe((value) => {
-      this.myTracking = value;
-      this.selectDate({ day: this.actualDay, monthType: 'current' });
-      this.initializePaseoDates();
-    });
+    this.trackerService
+      .getAllTrack()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        this.myTracking = value;
+        this.selectDate({ day: this.actualDay, monthType: 'current' });
+        this.initializePaseoDates();
+      });
   }
 
   isCurrentMonth(): boolean {
@@ -193,12 +200,10 @@ export class CalendarComponent implements OnInit {
     }
 
     const selectedDateStr = this.selectedDate.toISOString().split('T')[0]; // 'yyyy-MM-dd'
-    console.log(selectedDateStr);
     this.selectedMeditation = this.myTracking?.filter((update: any) => {
       const itemDateStr = new Date(update.date).toISOString().split('T')[0]; // 'yyyy-MM-dd'
       return itemDateStr === selectedDateStr;
     });
-    console.log(this.selectedMeditation);
   }
 
   toggleModal(isVisible: boolean, data?: any) {
@@ -210,7 +215,6 @@ export class CalendarComponent implements OnInit {
   }
 
   toggleEdit(id: string): void {
-    console.log('click');
     this.editMode = !this.editMode;
     if (this.editingMeditationId === id) {
       this.editingMeditationId = undefined;
@@ -220,50 +224,40 @@ export class CalendarComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.editMode) {
-      this.trackerService
-        .updateMeditation(this.meditation._id as string, this.meditation)
-        .subscribe(
-          (response) => {
-            console.log(response);
-            this.isVisible = false;
-            this.editMode = false;
-            this.getTracking();
-            this.meditation = {
-              duration: 0,
-              type: MeditationType.Vipassana,
-              notes: '',
-              date: undefined,
-            };
-          },
-          (error) => {
-            console.error('Error updating meditation', error);
-          }
-        );
-    } else {
-      this.trackerService.newMeditation(this.meditation).subscribe(
-        (response) => {
-          this.getTracking();
-          console.log(response);
-          console.log(this.meditation);
-          this.toggleModal(false);
-          this.meditation = {
-            duration: 0,
-            type: MeditationType.Vipassana,
-            notes: '',
-            date: undefined,
-          };
-        },
-        (error) => {
-          console.error('Error creating meditation', error);
-        }
-      );
-    }
+    const observable = this.editMode
+      ? this.trackerService.updateMeditation(
+          this.meditation._id as string,
+          this.meditation
+        )
+      : this.trackerService.newMeditation(this.meditation);
+
+    observable.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        this.getTracking();
+        this.toggleModal(false);
+        this.editMode = false;
+        this.meditation = {
+          duration: undefined,
+          type: MeditationType.Vipassana,
+          notes: '',
+          date: undefined,
+        };
+      },
+      error: (error) => console.error('Error', error),
+    });
   }
 
   deleteMeditation(id: string) {
-    this.trackerService.deleteMeditation(id).subscribe((value) => {
-      this.getTracking();
-    });
+    this.trackerService
+      .deleteMeditation(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        this.getTracking();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

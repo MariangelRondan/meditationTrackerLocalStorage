@@ -8,4 +8,12 @@ import { CalendarComponent } from '../../component/calendar/calendar.component';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent {}
+export class HomeComponent {
+  showAnimation: boolean = true;
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.showAnimation = false;
+    }, 3000);
+  }
+}

@@ -1,6 +1,6 @@
 export interface MeditationI {
   _id?: string;
-  duration: number;
+  duration: number | undefined;
   type: MeditationType;
   notes: string;
   date: Date | undefined;

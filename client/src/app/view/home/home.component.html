@@ -1,5 +1,26 @@
+@if(showAnimation){
+<div class="absolute w-full min-h-full mx-auto text-center bg-[#d4e7de]">
+  <p
+    class="text-animation-1 text-[var(--color-letras)] font-bold text-4xl mt-20"
+  >
+    Gracias
+  </p>
+  <p
+    class="text-animation-2 opacity-0 text-[var(--color-letras)] font-semibold text-xl lg:text-2xl mt-4"
+  >
+    por tomarte este momento para vos
+  </p>
+  <img
+    src="../../../assets/hands.png"
+    alt="Serpiente y manos"
+    class="w-80 mx-auto h-auto mt-16 scale-animation"
+  />
+</div>
+
+} @else {
+
 <div class="fade-in-animation w-full min-h-screen bg-[#d4e7de]">
-  <div class="h-16 gradient">
+  <div class="h-16 bg-[#13867e]">
     <img
       src="../../../assets/PNG BLANCO-LOGO.PNG"
       class="w-14 ml-5 pt-4"
@@ -8,3 +29,4 @@
   </div>
   <app-calendar></app-calendar>
 </div>
+}
