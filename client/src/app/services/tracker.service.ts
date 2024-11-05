@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class TrackerService {
-  API_URL = 'http://localhost:3000/tracker';
+  API_URL = 'https://meditaitiontracker.onrender.com';
 
   constructor(private http: HttpClient) {}
 
