@@ -8,13 +8,12 @@ export class TrackerService {
   API_URL = 'https://meditaitiontracker.onrender.com/tracker';
 
   constructor(private http: HttpClient) {}
-
   newMeditation(dayData: any) {
-    return this.http.post<any>(this.API_URL, dayData);
+    return this.http.post<any>(`${this.API_URL}`, dayData);
   }
 
   getAllTrack() {
-    return this.http.get<any>(this.API_URL);
+    return this.http.get<any>(`${this.API_URL}`);
   }
 
   updateMeditation(id: string, updateData: any) {
