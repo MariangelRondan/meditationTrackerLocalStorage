@@ -100,7 +100,7 @@
           : "Nos tomamos un ratito?"
       }}
     </h2>
-    <ol class="mt-2 space-y-1 text-sm w-full leading-6 text-gray-500">
+    <ol class="mt-4 space-y-2 text-sm w-full leading-6 text-gray-500">
       @if(selectedMeditation.length > 0){ @for(meditation of selectedMeditation;
       track meditation){
       <li
@@ -127,7 +127,7 @@
               <strong class="text-[var(--color-primario)]">Tipo:</strong>
               {{ meditation.type }}
             </p>
-            <div class="mt-0.5 h-auto break-words w-min max-w-36">
+            <div class="mt-0.5 h-auto break-words w-full max-w-40 mr-3">
               <strong class="text-[var(--color-primario)]">Notas:</strong>
               {{ meditation.notes }}
             </div>
