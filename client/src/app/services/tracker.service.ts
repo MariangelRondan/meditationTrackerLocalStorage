@@ -8,6 +8,9 @@ import { MeditationI } from '../interfaces/interfaces';
 export class TrackerService {
   constructor(private http: HttpClient) {}
   newMeditation(dayData: any) {
+    dayData.id =
+      Date.now().toString() + Math.random().toString(36).substring(2);
+
     const myMeditations: MeditationI[] = JSON.parse(
       localStorage.getItem('Meditations') || '[]'
     );

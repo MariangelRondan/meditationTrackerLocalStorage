@@ -3,7 +3,6 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TrackerService } from '../../services/tracker.service';
 import { MeditationI, MeditationType } from '../../interfaces/interfaces';
-import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-calendar',
@@ -27,8 +26,6 @@ export class CalendarComponent implements OnInit {
   actualYear: number = new Date().getFullYear();
   actualDay: number = new Date().getDate();
   selectedDate: any;
-
-  private destroy$ = new Subject<void>();
 
   //dialog
   isVisible: boolean = false;
