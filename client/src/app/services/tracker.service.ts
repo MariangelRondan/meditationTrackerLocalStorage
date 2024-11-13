@@ -1,26 +1,45 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MeditationI } from '../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TrackerService {
-  API_URL = 'https://meditaitiontracker.onrender.com/tracker';
-
   constructor(private http: HttpClient) {}
   newMeditation(dayData: any) {
-    return this.http.post<any>(`${this.API_URL}`, dayData);
+    const myMeditations: MeditationI[] = JSON.parse(
+      localStorage.getItem('Meditations') || '[]'
+    );
+    myMeditations.push(dayData);
+    localStorage.setItem('Meditations', JSON.stringify(myMeditations));
   }
 
   getAllTrack() {
-    return this.http.get<any>(`${this.API_URL}`);
+    return JSON.parse(localStorage.getItem('Meditations') || '[]');
   }
 
-  updateMeditation(id: string, updateData: any) {
-    return this.http.put<any>(`${this.API_URL}/${id}`, updateData);
+  updateMeditation(id: string, updateData: Partial<MeditationI>) {
+    const myMeditations: MeditationI[] = JSON.parse(
+      localStorage.getItem('Meditations') || '[]'
+    );
+
+    const index = myMeditations.findIndex((meditation) => meditation.id === id);
+    if (index !== -1) {
+      myMeditations[index] = { ...myMeditations[index], ...updateData };
+      localStorage.setItem('Meditations', JSON.stringify(myMeditations));
+    }
   }
 
   deleteMeditation(id: string) {
-    return this.http.delete<any>(`${this.API_URL}/${id}`);
+    const myMeditations: MeditationI[] = JSON.parse(
+      localStorage.getItem('Meditations') || '[]'
+    );
+
+    const updatedMeditations = myMeditations.filter(
+      (meditation) => meditation.id !== id
+    );
+
+    localStorage.setItem('Meditations', JSON.stringify(updatedMeditations));
   }
 }

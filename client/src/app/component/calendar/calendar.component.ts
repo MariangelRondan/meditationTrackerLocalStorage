@@ -12,7 +12,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
 })
-export class CalendarComponent implements OnInit, OnDestroy {
+export class CalendarComponent implements OnInit {
   diasMeditados: Set<string> = new Set();
   selectedMeditation: undefined | any | void = [];
   myTracking = [];
@@ -51,14 +51,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   getTracking() {
-    this.trackerService
-      .getAllTrack()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value) => {
-        this.myTracking = value;
-        this.selectDate({ day: this.actualDay, monthType: 'current' });
-        this.initializePaseoDates();
-      });
+    this.myTracking = this.trackerService.getAllTrack();
+    this.selectDate({ day: this.actualDay, monthType: 'current' });
+    this.initializePaseoDates();
   }
 
   isCurrentMonth(): boolean {
@@ -226,38 +221,25 @@ export class CalendarComponent implements OnInit, OnDestroy {
   onSubmit() {
     const observable = this.editMode
       ? this.trackerService.updateMeditation(
-          this.meditation._id as string,
+          this.meditation.id as string,
           this.meditation
         )
       : this.trackerService.newMeditation(this.meditation);
 
-    observable.pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response) => {
-        this.getTracking();
-        this.toggleModal(false);
-        this.editMode = false;
-        this.meditation = {
-          duration: undefined,
-          type: MeditationType.Vipassana,
-          notes: '',
-          date: undefined,
-        };
-      },
-      error: (error) => console.error('Error', error),
-    });
+    this.getTracking();
+    this.toggleModal(false);
+    this.editMode = false;
+    this.meditation = {
+      duration: undefined,
+      type: MeditationType.Vipassana,
+      notes: '',
+      date: undefined,
+    };
   }
 
   deleteMeditation(id: string) {
-    this.trackerService
-      .deleteMeditation(id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value) => {
-        this.getTracking();
-      });
-  }
+    this.trackerService.deleteMeditation(id);
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.getTracking();
   }
 }
