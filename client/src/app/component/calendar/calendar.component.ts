@@ -255,7 +255,12 @@ export class CalendarComponent implements OnInit {
 
   deleteMeditation(id: string) {
     this.trackerService.deleteMeditation(id);
-
+    this.messageService.add({
+      severity: 'success',
+      summary: '🌬️ Meditación eliminada',
+      detail:
+        'Ese momento ha sido liberado. Pronto vendrán más espacios de paz.',
+    });
     this.getTracking();
   }
 }
