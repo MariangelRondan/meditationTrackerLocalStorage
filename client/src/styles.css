@@ -1,3 +1,9 @@
+/* Tema de PrimeNG */
+@import "primeng/resources/themes/saga-blue/theme.css";
+/* Estilos básicos de PrimeNG */
+@import "primeng/resources/primeng.min.css";
+/* Iconos de PrimeNG */
+@import "primeicons/primeicons.css";
 /* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;

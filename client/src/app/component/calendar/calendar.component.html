@@ -1,5 +1,6 @@
 <div class="max-w-[80%] mx-auto pt-10">
   <div class="flex items-center">
+    <p-toast position="top-center"></p-toast>
     <h2 class="ml-3 flex-auto text-md font-semibold text-[var(--color-letras)]">
       {{ currentMonth | date : "MMMM yyyy" }}
     </h2>
@@ -102,7 +103,7 @@
     </h2>
     <ol class="mt-4 space-y-2 text-sm w-full leading-6 text-gray-500">
       @if(selectedMeditation.length > 0){ @for(meditation of selectedMeditation;
-      track meditation){
+      track meditation.id){
       <li
         class="relative grid grid-cols-[1fr_2fr] items-center space-x-2 rounded-xl px-1 py-2 bg-gray-100 h-auto"
       >
@@ -156,7 +157,7 @@
                 />
               </svg>
             </button>
-            @if(editingMeditationId === meditation.id && editMode){
+            @if(editingMeditationId === meditation.id && openEditDeleteSelect){
 
             <div
               class="absolute top-8 right-2 z-20 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"

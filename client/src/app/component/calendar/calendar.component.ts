@@ -3,11 +3,14 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TrackerService } from '../../services/tracker.service';
 import { MeditationI, MeditationType } from '../../interfaces/interfaces';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [DatePipe, NgClass, FormsModule],
+  imports: [DatePipe, NgClass, FormsModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
 })
@@ -15,6 +18,7 @@ export class CalendarComponent implements OnInit {
   diasMeditados: Set<string> = new Set();
   selectedMeditation: undefined | any | void = [];
   myTracking = [];
+  openEditDeleteSelect = false;
   editMode = false;
   editingMeditationId: string | undefined = undefined;
   //Calendar
@@ -39,7 +43,8 @@ export class CalendarComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private trackerService: TrackerService
+    private trackerService: TrackerService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -200,6 +205,7 @@ export class CalendarComponent implements OnInit {
 
   toggleModal(isVisible: boolean, data?: any) {
     this.isVisible = isVisible;
+    this.openEditDeleteSelect = false;
     if (data) {
       this.editMode = true;
       this.meditation = data;
@@ -207,7 +213,8 @@ export class CalendarComponent implements OnInit {
   }
 
   toggleEdit(id: string): void {
-    this.editMode = !this.editMode;
+    this.editMode = true;
+    this.openEditDeleteSelect = true;
     if (this.editingMeditationId === id) {
       this.editingMeditationId = undefined;
     } else {
@@ -216,12 +223,24 @@ export class CalendarComponent implements OnInit {
   }
 
   onSubmit() {
-    const observable = this.editMode
-      ? this.trackerService.updateMeditation(
-          this.meditation.id as string,
-          this.meditation
-        )
-      : this.trackerService.newMeditation(this.meditation);
+    if (this.editMode) {
+      this.trackerService.updateMeditation(
+        this.meditation.id as string,
+        this.meditation
+      );
+      this.messageService.add({
+        severity: 'success',
+        summary: '✨ Actualización exitosa ✨',
+        detail: 'Respira profundo y sigue el día.',
+      });
+    } else {
+      this.trackerService.newMeditation(this.meditation);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Gracias por cuidar de ti 🧘‍♀️',
+        detail: 'Tu espacio de tranquilidad de hoy está guardado.',
+      });
+    }
 
     this.getTracking();
     this.toggleModal(false);
