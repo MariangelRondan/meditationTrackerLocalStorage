@@ -223,6 +223,7 @@ export class CalendarComponent implements OnInit {
   }
 
   onSubmit() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (this.editMode) {
       this.trackerService.updateMeditation(
         this.meditation.id as string,
