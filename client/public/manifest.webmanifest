@@ -1,7 +1,7 @@
 {
   "name": "Mantra Meditation Tracker",
   "short_name": "Mantra",
-  "theme_color": "#1976d2",
+  "theme_color": "#13867E",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
