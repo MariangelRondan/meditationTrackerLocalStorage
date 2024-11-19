@@ -5,6 +5,3 @@ import { AppComponent } from './app/app.component';
 bootstrapApplication(AppComponent, appConfig).catch((err) =>
   console.error(err)
 );
-if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-  window.location.reload();
-}
