@@ -196,9 +196,9 @@ export class CalendarComponent implements OnInit {
       this.meditation.date = this.selectedDate;
     }
 
-    const selectedDateStr = this.selectedDate.toISOString().split('T')[0]; // 'yyyy-MM-dd'
+    const selectedDateStr = JSON.stringify(this.selectedDate).split('T')[0];
     this.selectedMeditation = this.myTracking?.filter((update: any) => {
-      const itemDateStr = new Date(update.date).toISOString().split('T')[0]; // 'yyyy-MM-dd'
+      const itemDateStr = JSON.stringify(new Date(update.date)).split('T')[0]; // 'yyyy-MM-dd'
       return itemDateStr === selectedDateStr;
     });
   }
