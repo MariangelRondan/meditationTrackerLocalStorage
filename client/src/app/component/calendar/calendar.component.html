@@ -1,6 +1,7 @@
-<div class="max-w-[80%] mx-auto pt-10">
-  <div class="flex items-center">
+<div class="max-w-[80%] mx-auto pt-20">
+  <div class="flex items-center rounded-lg py-1 border-b-2 border-[--naranja]">
     <p-toast position="top-center"></p-toast>
+
     <h2 class="ml-3 flex-auto text-md font-semibold text-[var(--color-letras)]">
       {{ currentMonth | date : "MMMM yyyy" }}
     </h2>
@@ -26,7 +27,7 @@
     <button
       (click)="nextMonth()"
       type="button"
-      class="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+      class="-my-1.5 mr-2 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
     >
       <span class="sr-only">Next month</span>
       <svg
@@ -66,8 +67,7 @@
           'highlight-day': isPaseoDay(dayInfo.day),
           'highlight-current-day': isCurrentDay(dayInfo.day),
           'selected-day': selectedDate
-            ? selectedDate.getDate() === dayInfo.day &&
-              dayInfo.monthType === 'current'
+            ? selectedDate.getDate() === dayInfo.day
             : ''
         }"
         class="p-1"
@@ -101,7 +101,7 @@
           : "Nos tomamos un ratito?"
       }}
     </h2>
-    <ol class="mt-4 space-y-2 text-sm w-full leading-6 text-gray-500">
+    <ol class="mt-6 space-y-2 text-sm w-full leading-6 text-gray-500">
       @if(selectedMeditation.length > 0){ @for(meditation of selectedMeditation;
       track meditation.id){
       <li
@@ -200,9 +200,9 @@
       >
         <button
           (click)="toggleModal(true)"
-          class="mx-auto bg-[var(--verde-claro)] px-2 py-1 rounded-md text-white"
+          class="mx-auto px-4 pt-2 text-3xl !rounded-3xl font-medium bg-[var(--naranja)] p-3 text-white"
         >
-          New update
+          +
         </button>
       </li>
     </ol>

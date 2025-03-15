@@ -6,14 +6,14 @@
   color: var(--color-letras);
 }
 
-.highlight-current-day {
+.highlight-current-day.thisMonth {
   color: var(--naranja);
   font-weight: 700;
   width: 30px;
   border: 3px dashed var(--naranja);
 }
 
-.highlight-day {
+.highlight-day.thisMonth {
   width: 30px;
   background-color: var(--color-primario);
   border: 2px solid var(--verde-claro);
@@ -21,7 +21,7 @@
   color: white;
 }
 
-.selected-day {
+.selected-day.thisMonth {
   width: 30px;
   font-weight: 700;
   box-shadow: 0 0 10px 5px var(--naranja);
