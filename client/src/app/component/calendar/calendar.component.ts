@@ -17,7 +17,7 @@ import { MessageService } from 'primeng/api';
 export class CalendarComponent implements OnInit {
   diasMeditados: Set<string> = new Set();
   selectedMeditation: undefined | any | void = [];
-  myTracking = [];
+  myTracking: MeditationI[] = [];
   openEditDeleteSelect = false;
   editMode = false;
   editingMeditationId: string | undefined = undefined;
@@ -151,10 +151,13 @@ export class CalendarComponent implements OnInit {
 
   initializePaseoDates(): void {
     this.diasMeditados.clear();
-    this.myTracking?.forEach((update: any) => {
+    this.myTracking?.forEach((update: MeditationI) => {
+      console.log('Meditation', update);
       // Convertir fecha ISO a formato 'yyyy-MM-dd'
-      const formattedDate = new Date(update.date).toISOString().split('T')[0];
-      this.diasMeditados.add(formattedDate);
+      if (update.date) {
+        const formattedDate = new Date(update.date).toISOString().split('T')[0];
+        this.diasMeditados.add(formattedDate);
+      }
     });
   }
 
