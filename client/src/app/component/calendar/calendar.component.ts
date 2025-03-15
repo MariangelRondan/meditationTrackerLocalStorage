@@ -176,37 +176,36 @@ export class CalendarComponent implements OnInit {
     const formattedDate = date.toISOString().split('T')[0];
     return this.diasMeditados.has(formattedDate);
   }
-
   selectDate(dayInfo: any) {
     if (dayInfo.monthType === 'prev') {
-      // Si es del mes anterior
       this.previousMonth();
-      this.selectedDate = new Date(
-        this.currentMonth.getFullYear(),
-        this.currentMonth.getMonth(),
-        dayInfo.day
-      );
     } else if (dayInfo.monthType === 'next') {
-      // Si es del mes siguiente
       this.nextMonth();
-      this.selectedDate = new Date(
-        this.currentMonth.getFullYear(),
-        this.currentMonth.getMonth(),
-        dayInfo.day
-      );
-    } else {
-      // Si es del mes actual
-      this.selectedDate = new Date(
-        this.currentMonth.getFullYear(),
-        this.currentMonth.getMonth(),
-        dayInfo.day
-      );
-      this.meditation.date = this.selectedDate;
     }
 
-    const selectedDateStr = JSON.stringify(this.selectedDate).split('T')[0];
+    this.selectedDate = new Date(
+      this.currentMonth.getFullYear(),
+      this.currentMonth.getMonth(),
+      dayInfo.day
+    );
+
+    this.meditation.date = this.selectedDate;
+
+    const selectedDateStr = this.selectedDate.toISOString().split('T')[0];
+
     this.selectedMeditation = this.myTracking?.filter((update: any) => {
-      const itemDateStr = JSON.stringify(new Date(update.date)).split('T')[0]; // 'yyyy-MM-dd'
+      if (!update.date) {
+        console.warn('update.date es undefined o null:', update);
+        return false;
+      }
+
+      const itemDateObj = new Date(update.date);
+      if (isNaN(itemDateObj.getTime())) {
+        console.error('Fecha inválida en update.date:', update.date);
+        return false;
+      }
+
+      const itemDateStr = itemDateObj.toISOString().split('T')[0];
       return itemDateStr === selectedDateStr;
     });
   }
