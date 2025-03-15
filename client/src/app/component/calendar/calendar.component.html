@@ -2,13 +2,15 @@
   <div class="flex items-center rounded-lg py-1 border-b-2 border-[--naranja]">
     <p-toast position="top-center"></p-toast>
 
-    <h2 class="ml-3 flex-auto text-md font-semibold text-[var(--color-letras)]">
+    <h2
+      class="ml-3 mb-1 flex-auto text-md font-semibold text-[var(--color-letras)]"
+    >
       {{ currentMonth | date : "MMMM yyyy" }}
     </h2>
     <button
       (click)="previousMonth()"
       type="button"
-      class="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+      class="mb-1 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
     >
       <span class="sr-only">Previous month</span>
       <svg
@@ -27,7 +29,7 @@
     <button
       (click)="nextMonth()"
       type="button"
-      class="-my-1.5 mr-2 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+      class="mb-1 mr-2 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
     >
       <span class="sr-only">Next month</span>
       <svg
@@ -200,7 +202,7 @@
       >
         <button
           (click)="toggleModal(true)"
-          class="mx-auto px-4 pt-2 text-3xl !rounded-3xl font-medium bg-[var(--naranja)] p-3 text-white"
+          class="mx-auto px-4 pt-1 text-3xl !rounded-3xl font-medium bg-[var(--naranja)] p-2 text-white"
         >
           +
         </button>
