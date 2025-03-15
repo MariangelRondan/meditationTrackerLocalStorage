@@ -55,7 +55,7 @@ export class CalendarComponent implements OnInit {
   getTracking() {
     this.myTracking = this.trackerService.getAllTrack();
     this.selectDate({ day: this.actualDay, monthType: 'current' });
-    this.initializePaseoDates();
+    this.initializeMeditations();
   }
 
   isCurrentMonth(): boolean {
@@ -149,15 +149,20 @@ export class CalendarComponent implements OnInit {
     return index >= totalDays;
   }
 
-  initializePaseoDates(): void {
+  initializeMeditations(): void {
     this.diasMeditados.clear();
     this.myTracking?.forEach((update: MeditationI) => {
-      console.log('Meditation', update);
-      // Convertir fecha ISO a formato 'yyyy-MM-dd'
-      if (update.date) {
-        const formattedDate = new Date(update.date).toISOString().split('T')[0];
-        this.diasMeditados.add(formattedDate);
+      if (!update.date) {
+        console.warn('Fecha inválida detectada:', update);
+        return;
       }
+      let dateObj = new Date(update.date);
+      if (isNaN(dateObj.getTime())) {
+        console.error('Fecha inválida al convertir:', update.date);
+        return;
+      }
+      let e = dateObj.toISOString().split('T')[0];
+      this.diasMeditados.add(e);
     });
   }
 
