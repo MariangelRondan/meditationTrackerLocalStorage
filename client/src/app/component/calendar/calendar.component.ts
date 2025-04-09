@@ -1,5 +1,5 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TrackerService } from '../../services/tracker.service';
 import { MeditationI, MeditationType } from '../../interfaces/interfaces';
@@ -16,7 +16,7 @@ import { MessageService } from 'primeng/api';
 })
 export class CalendarComponent implements OnInit {
   diasMeditados: Set<string> = new Set();
-  selectedMeditation: undefined | any | void = [];
+  selectedMeditation: MeditationI[]  | undefined;
   myTracking: MeditationI[] = [];
   openEditDeleteSelect = false;
   editMode = false;
@@ -166,7 +166,7 @@ export class CalendarComponent implements OnInit {
     });
   }
 
-  isPaseoDay(day: number): boolean {
+  isMeditationDay(day: number): boolean {
     const date = new Date(
       this.currentMonth.getFullYear(),
       this.currentMonth.getMonth(),
@@ -193,7 +193,7 @@ export class CalendarComponent implements OnInit {
 
     const selectedDateStr = this.selectedDate.toISOString().split('T')[0];
 
-    this.selectedMeditation = this.myTracking?.filter((update: any) => {
+    this.selectedMeditation = this.myTracking?.filter((update: MeditationI) => {
       if (!update.date) {
         console.warn('update.date es undefined o null:', update);
         return false;

@@ -66,7 +66,7 @@
           notThisMonth: dayInfo.monthType === 'prev',
           lasext: dayInfo.monthType === 'next',
           thisMonth: dayInfo.monthType === 'current',
-          'highlight-day': isPaseoDay(dayInfo.day),
+          'highlight-day': isMeditationDay(dayInfo.day),
           'highlight-current-day': isCurrentDay(dayInfo.day),
           'selected-day': selectedDate
             ? selectedDate.getDate() === dayInfo.day
@@ -98,14 +98,14 @@
       class="text-base font-semibold leading-6 text-[var(--color-letras)] text-center px-12"
     >
       {{
-        selectedMeditation.length > 0
+        selectedMeditation && selectedMeditation.length > 0
           ? "Meditamos otra vez?"
           : "Nos tomamos un ratito?"
       }}
     </h2>
     <ol class="mt-6 space-y-2 text-sm w-full leading-6 text-gray-500">
-      @if(selectedMeditation.length > 0){ @for(meditation of selectedMeditation;
-      track meditation.id){
+      @if(selectedMeditation && selectedMeditation.length > 0){ @for(meditation
+      of selectedMeditation; track meditation.id){
       <li
         class="relative grid grid-cols-[1fr_2fr] items-center space-x-2 rounded-xl px-1 py-2 bg-gray-100 h-auto"
       >
@@ -120,24 +120,24 @@
             </p>
             <p class="mt-0.5">
               <strong class="text-[var(--color-primario)]">Fecha:</strong>
-              {{ meditation.date | date }}
+              {{ meditation?.date | date }}
             </p>
             <p class="mt-0.5">
               <strong class="text-[var(--color-primario)]">Duración:</strong>
-              {{ meditation.duration }} min
+              {{ meditation?.duration }} min
             </p>
             <p class="mt-0.5">
               <strong class="text-[var(--color-primario)]">Tipo:</strong>
-              {{ meditation.type }}
+              {{ meditation?.type }}
             </p>
             <div class="mt-0.5 h-auto break-words w-full max-w-40 mr-3">
               <strong class="text-[var(--color-primario)]">Notas:</strong>
-              {{ meditation.notes }}
+              {{ meditation?.notes }}
             </div>
           </div>
           <div>
             <button
-              (click)="toggleEdit(meditation.id)"
+              (click)="toggleEdit(meditation.id!)"
               type="button"
               class="absolute top-2 right-2 z-10 rounded-full p-1.5 text-gray-500 hover:text-gray-600"
               id="menu-0-button"
@@ -181,7 +181,7 @@
               </div>
               <div class="py-1" role="none">
                 <button
-                  (click)="deleteMeditation(meditation.id)"
+                  (click)="deleteMeditation(meditation.id!)"
                   class="block px-4 py-2 text-sm text-gray-700"
                   role="menuitem"
                   tabindex="-1"
