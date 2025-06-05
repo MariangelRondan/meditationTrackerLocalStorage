@@ -1,19 +1,16 @@
 import { Component } from '@angular/core';
-import { CalendarComponent } from '../../component/calendar/calendar.component';
+import {
+  RouterLink,
+  RouterLinkActive,
+  RouterModule,
+  RouterOutlet,
+} from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CalendarComponent],
+  imports: [RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent {
-  showAnimation: boolean = true;
-
-  ngOnInit() {
-    setTimeout(() => {
-      this.showAnimation = false;
-    }, 3000);
-  }
-}
+export class HomeComponent {}

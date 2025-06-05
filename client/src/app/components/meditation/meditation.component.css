@@ -1,0 +1,60 @@
+.gradient {
+  background-image: linear-gradient(to right top, #13867e, #45a085, #f3eada);
+}
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-animation {
+  animation: fadeInUp 1.5s ease-out forwards;
+}
+
+@keyframes scaleUpDown {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.scale-animation {
+  animation: scaleUpDown 4s ease-in-out infinite;
+}
+
+.text-animation-1 {
+  animation: fadeInUp 2s ease-out forwards;
+}
+
+.text-animation-2 {
+  opacity: 0;
+  animation: fadeIn 2s ease-out 1s forwards;
+}
