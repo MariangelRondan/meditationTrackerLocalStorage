@@ -1,4 +1,4 @@
-<div class="max-w-[80%] mx-auto pt-12">
+<div class="max-w-[80%] md:max-w-[40%] mx-auto pt-12">
   <div class="flex items-center rounded-lg py-1 border-b-2 border-[--naranja]">
     <p-toast position="top-center"></p-toast>
 
@@ -59,7 +59,7 @@
   </div>
   <div class="mt-2 grid grid-cols-7 text-sm">
     @for( dayInfo of daysInMonth; let i = $index; track i){
-    <div class="p-4 relative">
+    <div class="p-4 md:p-2 relative">
       <button
         type="button"
         [ngClass]="{
@@ -80,7 +80,7 @@
     </div>
     }
   </div>
-  <div class="relative">
+  <div class="relative mt-2 md:mt-6">
     <div class="absolute inset-0 flex items-center" aria-hidden="true">
       <div class="w-full border-t border-[#3450ac]"></div>
     </div>
@@ -103,7 +103,7 @@
           : "Nos tomamos un ratito?"
       }}
     </h2>
-    <ol class="mt-6 space-y-2 text-sm w-full leading-6 text-gray-500">
+    <ol class="mt-6 mb-2 space-y-2 text-sm w-full leading-6 text-gray-500">
       @if(selectedMeditation && selectedMeditation.length > 0){ @for(meditation
       of selectedMeditation; track meditation.id){
       <li
